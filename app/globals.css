@@ -1,24 +1,57 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@utility btn {
+  @apply bg-[#343434] border-none p-2.5 text-[#f8f9fa] text-xs rounded-[5px] uppercase cursor-pointer transition-colors hover:bg-[#454545];
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility input {
+  @apply text-xs p-2.5 border-none rounded-[5px] outline-none text-white bg-[#343434] placeholder-[#afafaf];
+}
+
+:root {
+  --background: #232323;
+  --foreground: #ffffff;
+  color-scheme: dark;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.fly-in {
+  animation: flyIn 1.5s ease-in-out;
+}
+
+.fly-out {
+  animation: flyOut 1.2s ease-in-out;
+}
+
+@keyframes flyIn {
+  0% {
+      opacity: 1;
+      transform: translateY(250px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateX(0);
+  }
+}
+
+@keyframes flyOut {
+  0% {
+      opacity: 1;
+      transform: translateX(0);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(650px);
+  }
 }
