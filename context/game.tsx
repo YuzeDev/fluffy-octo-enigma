@@ -1,167 +1,180 @@
-"use client";
-import { createContext, ReactNode, useContext, useState } from "react";
+"use client"
 
-type Team = "blue" | "red";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react"
 
-interface IHeroes {
-  name: string;
-  img: string;
-}
-
-interface IGame {
-  ban: number;
-  player: number;
-  bluePlayerNames: string[];
-  redPlayerNames: string[];
-  redTeamName: string;
-  blueTeamName: string;
-  bluePick: IHeroes[];
-  blueBan: IHeroes[];
-  redPick: IHeroes[];
-  redBan: IHeroes[];
-}
+export type BanPhase = string[]
 
 interface IGameContext {
-  game: IGame;
-  changeBan: (ban: number) => void;
-  changePlayer: (player: number) => void;
-  changePlayerName: (index: number, name: string, side: Team) => void;
-  swapPlayerNames: () => void;
-  resetPlayerNames: () => void;
-  changeTeamName: (name: string, side: Team) => void;
-  swapTeamName: () => void;
-  setPickOrBan: (
-    type: "pick" | "ban",
-    side: Team,
-    index: number,
-    hero: IHeroes
-  ) => void;
+  gameName: string
+  banCount: number
+  playerCount: number
+  phaseList: BanPhase
+  currentPhaseIndex: number
+  timer: number
+  isRunning: boolean
+  setGameName: (name: string) => void
+  setBanCount: (ban: number) => void
+  setPlayerCount: (player: number) => void
+  startPhase: () => void
+  pausePhase: () => void
+  resetPhase: () => void
+  nextPhase: () => void
 }
 
 interface IGameProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
-const GameContext = createContext<IGameContext | null>(null);
+const GameContext = createContext<IGameContext | null>(null)
+
+const ban3Phase: BanPhase = [
+  "Blue Ban Phase",
+  "Red Ban Phase",
+  "Blue Ban Phase",
+  "Red Ban Phase",
+  "Blue Pick Phase",
+  "Red Pick Phase",
+  "Blue Pick Phase",
+  "Red Pick Phase",
+  "Red Ban Phase",
+  "Blue Ban Phase",
+  "Red Pick Phase",
+  "Blue Pick Phase",
+  "Red Pick Phase",
+]
+
+const ban5Phase: BanPhase = [
+  "Blue Ban Phase",
+  "Red Ban Phase",
+  "Blue Ban Phase",
+  "Red Ban Phase",
+  "Blue Ban Phase",
+  "Red Ban Phase",
+  "Blue Pick Phase",
+  "Red Pick Phase",
+  "Blue Pick Phase",
+  "Red Pick Phase",
+  "Red Ban Phase",
+  "Blue Ban Phase",
+  "Red Ban Phase",
+  "Blue Ban Phase",
+  "Red Pick Phase",
+  "Blue Pick Phase",
+  "Red Pick Phase",
+]
 
 export function useGame() {
-  const context = useContext(GameContext);
+  const context = useContext(GameContext)
   if (!context) {
-    throw new Error("useGame must be used within a GameProvider");
+    throw new Error("useGame must be used within a GameProvider")
   }
-  return context;
+  return context
 }
 
 export function GameProvider({ children }: IGameProviderProps) {
-  const [game, setGame] = useState<IGame>({
-    ban: 3,
-    player: 5,
-    bluePlayerNames: [],
-    redPlayerNames: [],
-    blueTeamName: "",
-    redTeamName: "",
-    bluePick: [],
-    blueBan: [],
-    redPick: [],
-    redBan: [],
-  });
+  const [gameName, setGameName] = useState<string>("")
+  const [banCount, setBanCountState] = useState<number>(3)
+  const [playerCount, setPlayerCountState] = useState<number>(5)
 
-  function changeBan(ban: number) {
-    setGame((prev) => ({ ...prev, ban }));
-  }
+  const [currentPhaseIndex, setCurrentPhaseIndex] = useState<number>(0)
+  const [timer, setTimer] = useState<number>(30)
+  const [isRunning, setIsRunning] = useState<boolean>(false)
 
-  function changePlayer(player: number) {
-    setGame((prev) => ({ ...prev, player }));
-  }
+  const phaseList = useMemo(
+    () => (banCount === 3 ? ban3Phase : ban5Phase),
+    [banCount],
+  )
 
-  function changePlayerName(index: number, name: string, side: Team) {
-    setGame((prev) => {
-      if (side == "blue") {
-        const bluePlayerNames = [...prev.bluePlayerNames];
-        bluePlayerNames[index] = name;
-        return { ...prev, bluePlayerNames };
-      } else {
-        const redPlayerNames = [...prev.redPlayerNames];
-        redPlayerNames[index] = name;
-        return { ...prev, redPlayerNames };
+  const startPhase = useCallback(() => {
+    setIsRunning(true)
+  }, [])
+
+  const pausePhase = useCallback(() => {
+    setIsRunning(false)
+  }, [])
+
+  const resetPhase = useCallback(() => {
+    setIsRunning(false)
+    setCurrentPhaseIndex(0)
+    setTimer(30)
+  }, [])
+
+  const nextPhase = useCallback(() => {
+    setIsRunning(false) // Hentikan timer sebelum pindah fase
+
+    setCurrentPhaseIndex((prevIndex) => {
+      if (prevIndex + 1 < phaseList.length) {
+        setTimer(30) // Reset timer untuk fase baru
+        return prevIndex + 1
       }
-    });
-  }
+      return prevIndex // Jangan ubah jika sudah di fase terakhir
+    })
+  }, [phaseList.length])
 
-  function swapPlayerNames() {
-    setGame((prev) => {
-      const bluePlayerNames = [...prev.bluePlayerNames];
-      const redPlayerNames = [...prev.redPlayerNames];
-      return {
-        ...prev,
-        bluePlayerNames: redPlayerNames,
-        redPlayerNames: bluePlayerNames,
-      };
-    });
-  }
+  const setBanCount = useCallback((ban: number) => {
+    setBanCountState(ban)
+  }, [])
 
-  function resetPlayerNames() {
-    setGame((prev) => ({ ...prev, bluePlayerNames: [], redPlayerNames: [] }));
-  }
+  const setPlayerCount = useCallback((player: number) => {
+    setPlayerCountState(player)
+  }, [])
 
-  function changeTeamName(name: string, side: Team) {
-    setGame((prev) => {
-      if (side == "blue") {
-        return { ...prev, blueTeamName: name };
-      } else return { ...prev, redTeamName: name };
-    });
-  }
+  // Timer logic
+  useEffect(() => {
+    if (isRunning && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1)
+      }, 1000)
 
-  function swapTeamName() {
-    setGame((prev) => {
-      const blue = prev.blueTeamName;
-      const red = prev.redTeamName;
-      return { ...prev, blueTeamName: red, redTeamName: blue };
-    });
-  }
+      return () => clearInterval(interval)
+    }
 
-  function setPickOrBan(
-    type: "pick" | "ban",
-    side: Team,
-    index: number,
-    hero: IHeroes
-  ) {
-    setGame((prev) => {
-      const updated = { ...prev };
+    // Jika timer habis, pindah ke fase berikutnya
+    if (timer === 0 && isRunning) {
+      setIsRunning(false)
 
-      if (type === "pick") {
-        if (side === "blue") {
-          updated.bluePick[index] = hero;
-        } else {
-          updated.redPick[index] = hero;
-        }
-      } else {
-        if (side === "blue") {
-          updated.blueBan[index] = hero;
-        } else {
-          updated.redBan[index] = hero;
-        }
-      }
-
-      return updated;
-    });
-  }
+      setTimeout(() => {
+        setCurrentPhaseIndex((prevIndex) => {
+          if (prevIndex + 1 < phaseList.length) {
+            setTimer(30) // Reset timer ke 30 detik untuk fase berikutnya
+            setIsRunning(true)
+            return prevIndex + 1
+          } else {
+            return prevIndex // Jangan ubah jika sudah di fase terakhir
+          }
+        })
+      }, 500) // Delay kecil sebelum pindah fase
+    }
+  }, [isRunning, timer, phaseList.length])
 
   return (
     <GameContext.Provider
       value={{
-        game,
-        changeBan,
-        changePlayer,
-        changePlayerName,
-        swapPlayerNames,
-        resetPlayerNames,
-        changeTeamName,
-        swapTeamName,
-        setPickOrBan,
+        gameName,
+        banCount,
+        playerCount,
+        phaseList,
+        currentPhaseIndex,
+        timer,
+        isRunning,
+        setGameName,
+        setBanCount,
+        setPlayerCount,
+        startPhase,
+        pausePhase,
+        resetPhase,
+        nextPhase,
       }}
     >
       {children}
     </GameContext.Provider>
-  );
+  )
 }

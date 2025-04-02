@@ -1,55 +1,65 @@
-"use client";
-import { useGame } from "@/context/game";
-import { ChangeEvent, useState } from "react";
+"use client"
+import { IDraftContext } from "@/context/draft"
+import { IGameContext } from "@/context/game"
+import IHeroes from "@/interface/heroes"
+import { ChangeEvent, useEffect, useState } from "react"
 
-interface IDropdownHeroProps {
-  type: "ban" | "pick";
-  side: "blue" | "red";
-  heroes: IHeroes[];
-}
-
-interface IHeroes {
-  name: string;
-  img: string;
+interface IDropdownHeroProps
+  extends Pick<IGameContext, "ban" | "player">,
+    Omit<IDraftContext, "resetPickAndBan"> {
+  type: "ban" | "pick"
+  side: "blue" | "red"
+  heroes: IHeroes[]
 }
 
 export default function DropdownHero({
   type,
   heroes,
   side,
+  ban,
+  blueBan,
+  bluePick,
+  player,
+  redBan,
+  redPick,
+  setPickOrBan,
 }: IDropdownHeroProps) {
-  const [show, setShow] = useState("");
-  const [data, setData] = useState<IHeroes[]>(heroes);
-  const [selected, setSelected] = useState<IHeroes[]>([]);
-  const {
-    game: { player, ban },
-    setPickOrBan,
-  } = useGame();
+  const [show, setShow] = useState("")
+  const [data, setData] = useState<IHeroes[]>(heroes)
+  const [selected, setSelected] = useState<IHeroes[]>([])
 
   function inputSearch(event: ChangeEvent<HTMLInputElement>, index: number) {
-    const val = event.target.value;
+    const val = event.target.value
     setSelected((prev) => {
-      const updated = [...prev];
-      updated[index] = { name: val, img: "" };
-      return updated;
-    });
+      const updated = [...prev]
+      updated[index] = { name: val, img: "" }
+      return updated
+    })
     setData(() => {
-      return heroes.filter((hero) => hero.name.toLowerCase().includes(val));
-    });
+      return heroes.filter((hero) => hero.name.toLowerCase().includes(val))
+    })
   }
 
   function onSelect(value: IHeroes, index: number) {
     setSelected((prev) => {
-      const updated = [...prev];
-      updated[index] = value;
-      return updated;
-    });
+      const updated = [...prev]
+      updated[index] = value
+      return updated
+    })
 
-    setPickOrBan(type, side, index, value);
+    setPickOrBan(type, side, index, value)
 
-    setData(heroes);
-    setShow("");
+    setData(heroes)
+    setShow("")
   }
+
+  useEffect(() => {
+    if (type === "pick") {
+      setSelected(side === "blue" ? bluePick : redPick)
+    } else {
+      setSelected(side === "blue" ? blueBan : redBan)
+    }
+  }, [bluePick, redPick, blueBan, redBan, type, side])
 
   return (
     <>
@@ -58,7 +68,7 @@ export default function DropdownHero({
           <div className="relative" key={type + index}>
             <input
               type="text"
-              className="input"
+              className="input w-full"
               onChange={(e) => inputSearch(e, index)}
               onFocus={() => setShow(type + index)}
               onBlur={() => setShow("")}
@@ -68,22 +78,22 @@ export default function DropdownHero({
               } side ${type} ${index + 1}`}
             />
 
-            <div className="absolute w-full max-h-[180px] overflow-y-auto bg-[#343434] z-10 mt-[5px] shadow rounded-[5px]">
+            <div className="absolute z-10 mt-[5px] max-h-[180px] w-full overflow-y-auto rounded-[5px] bg-[#343434] shadow">
               <div className={show == type + index ? "block" : "hidden"}>
                 {data.map((hero, j) => (
-                  <div
-                    className="p-2 cursor-pointer text-sm transition-colors hover:bg-[#3d3d3d]"
+                  <button
+                    className="w-full cursor-pointer p-2 text-start text-sm transition-colors hover:bg-[#3d3d3d]"
                     key={j}
                     onMouseDown={() => onSelect(hero, index)}
                   >
                     {hero.name}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
-        );
+        )
       })}
     </>
-  );
+  )
 }

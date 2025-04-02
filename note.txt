@@ -1,0 +1,36 @@
+const phases = [
+    { type: "Blue Ban Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Ban Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Ban Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Ban Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Ban Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Ban Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Pick Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Pick Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Red Ban Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Ban Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Ban Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Ban Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "./Assets/Other/Right.gif" },
+    { type: "Blue Pick Phase", direction: "./Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "./Assets/Other/Right.gif" },
+];
+
+const phases = [
+    { type: "Blue Ban Phase", direction: "/Assets/Other/Left.gif" },
+    { type: "Red Ban Phase", direction: "/Assets/Other/Right.gif" },
+    { type: "Blue Ban Phase", direction: "/Assets/Other/Left.gif" },
+    { type: "Red Ban Phase", direction: "/Assets/Other/Right.gif" },
+    { type: "Blue Pick Phase", direction: "/Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "/Assets/Other/Right.gif" },
+    { type: "Blue Pick Phase", direction: "/Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "/Assets/Other/Right.gif" },
+    { type: "Red Ban Phase", direction: "/Assets/Other/Right.gif" },
+    { type: "Blue Ban Phase", direction: "/Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "/Assets/Other/Right.gif" },
+    { type: "Blue Pick Phase", direction: "/Assets/Other/Left.gif" },
+    { type: "Red Pick Phase", direction: "/Assets/Other/Right.gif" },
+];
+
