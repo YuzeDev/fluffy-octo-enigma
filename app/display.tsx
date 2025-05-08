@@ -13,7 +13,7 @@ const TournamentName = memo(function () {
 TournamentName.displayName = "TournamentName"
 
 export default function Display() {
-  const { banCount, playerCount } = useGame()
+  const { banCount, playerCount, phaseList, currentPhaseIndex } = useGame()
   const { blueTeamName, redTeamName, bluePlayerNames, redPlayerNames } =
     useTeam()
   const { blueBan, redBan, bluePick, redPick } = useDraft()
@@ -123,17 +123,14 @@ export default function Display() {
                 height={100}
               />
             </div>
-            <div className="flex flex-1 flex-row items-center justify-center overflow-hidden">
-              <div className="bluelogo">
-                <div className="image-container">
-                  <img
-                    id="image1"
-                    src="https://via.placeholder.com/300x200?text=Image+1"
-                    alt="1"
-                  />
-                </div>
+            <div className="flex justify-center font-bold">
+              {phaseList[currentPhaseIndex]}
+            </div>
+            <div className="flex flex-1 flex-row items-center justify-around overflow-hidden">
+              <div className="w-1/4">
+                <img src="https://placehold.co/200x200" alt="1" />
               </div>
-              <div className="vslogo">
+              <div className="">
                 <Image
                   src="/assets/other/vs.png"
                   alt="vs"
@@ -141,14 +138,8 @@ export default function Display() {
                   height={75}
                 />
               </div>
-              <div className="redlogo">
-                <div className="image-container">
-                  <img
-                    id="image2"
-                    src="https://via.placeholder.com/300x200?text=Image+2"
-                    alt="2"
-                  />
-                </div>
+              <div className="w-1/4">
+                <img src="https://placehold.co/200x200" alt="2" />
               </div>
             </div>
             {/* <div className="winlose">
